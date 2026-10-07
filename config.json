@@ -1,0 +1,178 @@
+{
+  "port": 4747,
+  "timezone": "America/New_York",
+  "agentDataDir": "/home/box/agent-data/agents",
+  "workspaceDir": "/workspace",
+  "tokenFuel": {
+    "label": "Grok Bot weekly included usage",
+    "usedPct": 8,
+    "resetAtISO": "2026-10-08T00:00:00Z",
+    "_note": "Fallback only. The live source is usageFile."
+  },
+  "buildings": {
+    "Michael": "hq",
+    "Jim": "library",
+    "Kelly": "observatory",
+    "Oscar": "bank",
+    "Pam": "clubhouse",
+    "Char Tutor": "school",
+    "Vic Tutor": "school",
+    "Path": "school",
+    "Boyd Family Times": "press",
+    "Boyd Family Times (archive)": "press",
+    "Pods": "radio",
+    "Brief": "postoffice",
+    "Dwight": "workshop",
+    "Dr. EggBot": "hatchery",
+    "Ryan": "lighthouse",
+    "TokenMax": "launchpad"
+  },
+  "artifacts": {
+    "Jim": [
+      "ij_*.md",
+      "jim",
+      "interest-journal-*"
+    ],
+    "Boyd Family Times": [
+      "newspaper",
+      "newspaper-*"
+    ],
+    "Pods": [
+      "pods",
+      "pods-briefs",
+      "pods-rss",
+      "feed_*.xml",
+      "subs"
+    ],
+    "Pam": [
+      "pam"
+    ],
+    "Oscar": [
+      "finances",
+      "cash.csv"
+    ],
+    "Michael": [
+      "michael-*.txt"
+    ],
+    "TokenMax": [
+      "tokenmax"
+    ],
+    "Path": [
+      "hspt"
+    ]
+  },
+  "hide": [
+    "New Bot"
+  ],
+  "artifactsIgnoreBefore": "2026-10-03T17:30:00Z",
+  "_artifactsIgnoreBefore_note": "The box was restored on Oct 3 ~1:24 PM ET, which stamped every old file with that time; earlier artifact mtimes are ignored.",
+  "gameDays": [
+    {
+      "team": "Chelsea",
+      "label": "Chelsea v Bournemouth",
+      "startET": "2026-10-10T10:00:00-04:00",
+      "hours": 2,
+      "colors": [
+        "#034694",
+        "#ffffff"
+      ],
+      "tv": "USA/Peacock (US)",
+      "note": "Premier League, Stamford Bridge. 3:00 PM BST kickoff = 10:00 AM ET.",
+      "source": "https://www.skysports.com/premier-league-scores-fixtures/2026-10-01"
+    },
+    {
+      "team": "Terps",
+      "label": "Terps @ Ohio State",
+      "startET": "2026-10-10T16:15:00-04:00",
+      "hours": 3.5,
+      "colors": [
+        "#e21833",
+        "#ffd200"
+      ],
+      "tv": "BTN",
+      "note": "Big Ten, Ohio Stadium, Columbus. 4:15 PM ET.",
+      "source": "https://umterps.com/game-center/20054"
+    },
+    {
+      "team": "Ravens",
+      "label": "Ravens @ Falcons (SNF)",
+      "startET": "2026-10-11T20:20:00-04:00",
+      "hours": 3.5,
+      "colors": [
+        "#4c1d95",
+        "#facc15"
+      ],
+      "tv": "NBC/Peacock",
+      "note": "Week 5, Mercedes-Benz Stadium. 8:20 PM ET.",
+      "source": "https://www.baltimoreravens.com/schedule/2026/"
+    },
+    {
+      "team": "Chelsea",
+      "label": "Everton v Chelsea",
+      "startET": "2026-10-17T07:30:00-04:00",
+      "hours": 2,
+      "colors": [
+        "#034694",
+        "#ffffff"
+      ],
+      "tv": "USA/Peacock (US); TNT Sports (UK)",
+      "note": "Premier League, away. 12:30 PM BST kickoff = 7:30 AM ET.",
+      "source": "https://www.premierleague.com/en/news/4675097/all-380-fixtures-for-202627-premier-league-season"
+    },
+    {
+      "team": "Terps",
+      "label": "Terps v Rutgers (Homecoming)",
+      "startET": "2026-10-17T12:30:00-04:00",
+      "hours": 3.5,
+      "colors": [
+        "#e21833",
+        "#ffd200"
+      ],
+      "tv": "BTN",
+      "note": "Big Ten, SECU Stadium, College Park. 12:30 PM ET.",
+      "source": "https://www.cbssports.com/college-football/teams/MD/maryland-terrapins/schedule/"
+    },
+    {
+      "team": "Ravens",
+      "label": "Ravens @ Browns",
+      "startET": "2026-10-18T13:00:00-04:00",
+      "hours": 3.5,
+      "colors": [
+        "#4c1d95",
+        "#facc15"
+      ],
+      "tv": "FOX",
+      "note": "Week 6, Huntington Bank Field, Cleveland. 1:00 PM ET.",
+      "source": "https://www.nfl-schedule.com/games/baltimore-ravens-at-cleveland-browns-2026-week-6"
+    }
+  ],
+  "usageFile": "/workspace/tokenmax/usage.json",
+  "_artifacts_note": "Folders in /workspace whose file mtimes count as that bot's output. Only mtimes are read (never contents). deal-watch/, agent-tools/ and .playwright-mcp/ are not attributed because their owner can't be determined.",
+  "datedOutputs": [
+    {
+      "bot": "Boyd Family Times",
+      "source": "editionLog",
+      "label": "Family Times edition",
+      "defaultTime": "05:15"
+    },
+    {
+      "bot": "Jim",
+      "glob": [
+        "ij_????-??-??*",
+        "interest-journal-????-??-??",
+        "jim-daily-????-??-??"
+      ],
+      "label": "Interest Journal",
+      "defaultTime": "20:15"
+    }
+  ],
+  "_datedOutputs_note": "Outputs whose file NAME carries a date (or the edition log). When there's no exact timestamp that day, the island shows an approximate shift at the bot's usual time, labelled approximate.",
+  "gameNotes": [
+    {
+      "team": "Orioles",
+      "note": "Season over: 79\u201382, eliminated Sep 24, so no games through Oct 21.",
+      "source": "https://www.baseball-reference.com/teams/BAL/2026.shtml"
+    }
+  ],
+  "gameDaysCheckedAt": "2026-10-07T16:05:00-04:00"
+}

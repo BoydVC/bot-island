@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot Island · Boyd's Grok Bot fleet</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">🏝️</span>
+    <div>
+      <h1>Bot Island</h1>
+      <div class="sub">Boyd's Grok Bot fleet, living their best lives · <span class="remaster-tag">Sat Oct 10 remaster</span></div>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="island" class="on">🏝️ Island</button>
+    <button data-tab="doctor">🩺 Fleet Doctor</button>
+    <button data-tab="stats">📊 Ship-it Stats</button>
+  </nav>
+  <div class="controls">
+    <div class="seg" id="modeSeg">
+      <button data-mode="live" class="on">● Live</button>
+      <button data-mode="replay">⟲ Replay</button>
+    </div>
+    <select id="daySel" title="Replay a real day from the fleet's activity log" hidden></select>
+    <button id="playBtn" title="Play / pause (space)">⏸</button>
+    <button id="soundBtn" class="iconbtn" title="Sound: chimes when bots clock in">🔈</button>
+    <div class="seg" id="speedSeg">
+      <button data-speed="1" class="on">1×</button>
+      <button data-speed="60">60×</button>
+      <button data-speed="300">5m/s</button>
+      <button data-speed="1800">30m/s</button>
+    </div>
+    <div class="clock"><div id="clockTime">--:--</div><div id="clockDate">loading…</div></div>
+  </div>
+</header>
+<div id="islandView">
+<main>
+  <section class="stage">
+    <canvas id="island"></canvas>
+    <div id="tooltip" hidden></div>
+    <div class="legend" id="legend">
+      <div class="leg-row">
+        <span><i class="dot work"></i>working at workplace</span>
+        <span><i class="dot idle"></i>out and about</span>
+        <span><i class="dot sleep"></i>asleep at home</span>
+        <span class="leg-mark house">⌂ house</span>
+        <span class="leg-mark workb">⚒ workplace</span>
+        <button id="placesBtn" class="chip" title="Toggle workplace directory">🗺️ Places</button>
+        <button id="netBtn" class="chip" title="Show who messages whom">✉️ Who talks to whom</button>
+      </div>
+      <div class="leg-row hint">click a bot or building · scroll to zoom, drag to pan · <kbd>space</kbd> pause · <kbd>n</kbd> network · <kbd>p</kbd> places · <kbd>0</kbd> reset · <kbd>l</kbd> live</div>
+      <div id="placesDir" class="places-dir" hidden></div>
+    </div>
+    <div id="modeBadge" class="mode-badge" hidden></div>
+    <div id="skyChip" class="sky-chip" title="Island sky phase"></div>
+  </section>
+  <aside>
+    <div class="card fuel" id="fuelCard"></div>
+    <div class="card stats" id="statsCard"></div>
+    <details class="card health" id="healthWrap"><summary>🩺 Fleet health check</summary><div id="healthCard"></div></details>
+    <div class="card roster">
+      <h2>The fleet <span id="rosterCount"></span></h2>
+      <div id="roster"></div>
+    </div>
+  </aside>
+</main>
+<footer>
+  <div class="timeline-wrap">
+    <div class="tl-head"><h2 id="tlTitle">Today on the island</h2><span id="tlNote"></span></div>
+    <canvas id="timeline"></canvas>
+  </div>
+  <div class="ticker-wrap">
+    <h2>Island wire</h2>
+    <ul id="ticker"></ul>
+  </div>
+</footer>
+</div>
+<section id="doctorView" class="view" hidden></section>
+<section id="statsView" class="view" hidden></section>
+<div id="detail" hidden></div>
+<div id="tltip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
