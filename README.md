@@ -1,4 +1,4 @@
-# 🏝️ Bot Island
+# ⚔️ Bot Island
 
 **A living map of Boyd's Grok Bot fleet.** Every bot (Michael, Pam, Oscar, Jim, Kelly, Dwight, the tutors,
 the Family Times, Pods, Path, Brief, Ryan, Dr. EggBot, TokenMax) gets a little house on the island and a workplace
@@ -10,8 +10,19 @@ Inspired by @poteto's bookmark: *"i built an island that visualizes my bots as t
 work and then go to bed and their little houses when they're resting"* (https://x.com/poteto/status/2093023531642863686).
 Built by TokenMax from the Grok Bot weekly usage that would otherwise have reset unused on Oct 8, 2026.
 
-![Bot Island, Sat Oct 10 remaster](screenshots/00-best-home.png)
+![Bot Island // NEON, Oct 27 cyberpunk remaster](screenshots/neon-hero.png)
 
+
+## What's new (Tue Oct 27 · cyberpunk + pixel remaster)
+
+Visual-only remaster — collector, fleet JSON, API, replay/forecast, places directory, doctor/shipit, and usage HUD numbers are unchanged (pace % still never invented).
+
+* **Cyberpunk pixel city** — magenta/cyan neon palette, CRT vibe, rain haze, glowing plazas and neon paths.
+* **Pixel homes & workplaces** — status glow + Zzz at night; workplaces get neon workplace marks.
+* **Message drones** — cyan/magenta trails across the island.
+* **HUD chrome** — neon panels, remaster tag, mode badges / sky chip / pace HUD / places directory restyled but fully usable.
+
+![Neon dusk](screenshots/dusk.png) · ![Live pace](screenshots/live.png)
 
 ## What's new (Sat Oct 10 afternoon remaster)
 
@@ -232,7 +243,6 @@ python3 collect.py                                              # rebuild data/f
 * `timelapse.mjs`: CDP frame renderer used by `make_timelapse.sh`
 * `screenshots/`: rendered with headless Chrome via `./screenshot.sh <name> "<query>"`
 * `SHORTLIST.md` (one folder up): the other 9 project ideas from Boyd's bookmarks
-
 
 ---
 ## Repo notes
