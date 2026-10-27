@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bot Island · Boyd's Grok Bot fleet</title>
+<title>Bot Island · tactical grid</title>
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230c1416'/><rect x='1' y='1' width='6' height='6' fill='%234e5c3c'/><rect x='9' y='1' width='6' height='6' fill='%233a4034'/><rect x='1' y='9' width='6' height='6' fill='%233a4034'/><rect x='9' y='9' width='6' height='6' fill='%23e6b325'/></svg>">
 </head>
 <body>
 <header>
   <div class="brand">
-    <span class="logo">🏝️</span>
+    <span class="logo" aria-hidden="true">▣</span>
     <div>
       <h1>Bot Island</h1>
-      <div class="sub">Boyd's Grok Bot fleet, living their best lives · <span class="remaster-tag">Sat Oct 10 remaster</span></div>
+      <div class="sub">Tactical grid of Boyd's Grok Bot fleet · <span class="remaster-tag">inspired by Into the Breach's aesthetic</span></div>
     </div>
   </div>
   <nav class="tabs" id="tabs">
@@ -48,12 +48,12 @@
         <span><i class="dot work"></i>working at workplace</span>
         <span><i class="dot idle"></i>out and about</span>
         <span><i class="dot sleep"></i>asleep at home</span>
-        <span class="leg-mark house">⌂ house</span>
-        <span class="leg-mark workb">⚒ workplace</span>
+        <span class="leg-mark house">⌂ bay</span>
+        <span class="leg-mark workb">⚒ hangar</span>
         <button id="placesBtn" class="chip" title="Toggle workplace directory">🗺️ Places</button>
         <button id="netBtn" class="chip" title="Show who messages whom">✉️ Who talks to whom</button>
       </div>
-      <div class="leg-row hint">click a bot or building · scroll to zoom, drag to pan · <kbd>space</kbd> pause · <kbd>n</kbd> network · <kbd>p</kbd> places · <kbd>0</kbd> reset · <kbd>l</kbd> live</div>
+      <div class="leg-row hint">mechs on tiles · hangars light amber when crewed · messages cross as signal drones · scroll to zoom, drag to pan · <kbd>space</kbd> pause · <kbd>n</kbd> network · <kbd>p</kbd> places · <kbd>0</kbd> reset · <kbd>l</kbd> live</div>
       <div id="placesDir" class="places-dir" hidden></div>
     </div>
     <div id="modeBadge" class="mode-badge" hidden></div>
@@ -75,7 +75,7 @@
     <canvas id="timeline"></canvas>
   </div>
   <div class="ticker-wrap">
-    <h2>Island wire</h2>
+    <h2>Signal log</h2>
     <ul id="ticker"></ul>
   </div>
 </footer>

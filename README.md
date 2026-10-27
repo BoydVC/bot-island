@@ -1,19 +1,27 @@
 # 🏝️ Bot Island
 
 **A living map of Boyd's Grok Bot fleet.** Every bot (Michael, Pam, Oscar, Jim, Kelly, Dwight, the tutors,
-the Family Times, Pods, Path, Brief, Ryan, Dr. EggBot, TokenMax) gets a little house on the island and a workplace
-that matches its job. When a bot's routine runs, it walks to work and a speech bubble shows what it's doing
-("Calendar · list events", "Browsing espn.com", "Message from Michael"). At night it goes home and sleeps 💤.
-When bots message each other, paper airplanes fly across the island.
+the Family Times, Pods, Path, Brief, Ryan, Dr. EggBot, TokenMax) gets a bay on the island and a hangar
+that matches its job. When a bot's routine runs, it walks to work and a status plate shows what it's doing
+("Calendar · list events", "Browsing espn.com", "Message from Michael"). At night it goes home and sleeps.
+When bots message each other, signal drones cross the grid.
+
+## Theme
+
+The map is a visual homage to **Into the Breach** (Subset Games): a tactical pixel grid, olive and slate ground, fortified hangar buildings, and bots drawn as small mech units. The HUD is navy-teal with amber accents and cyan energy. This is original art in that spirit. It does not use Subset Games assets, logos, or trademarks beyond naming the inspiration.
+
+Collector, fleet data, API, replay, and forecast behavior are unchanged. This pass is visual only.
 
 Inspired by @poteto's bookmark: *"i built an island that visualizes my bots as they work! it's cute watching them
 work and then go to bed and their little houses when they're resting"* (https://x.com/poteto/status/2093023531642863686).
 Built by TokenMax from the Grok Bot weekly usage that would otherwise have reset unused on Oct 8, 2026.
 
-![Bot Island, Sat Oct 10 remaster](screenshots/00-best-home.png)
+![Bot Island, Into the Breach homage](screenshots/00-best-home.png)
 
 
 ## What's new (Sat Oct 10 afternoon remaster)
+
+The behaviors below are still in the app. The current paint is the Into the Breach homage described above (tactical grid, hangars, mech units, signal drones), not the earlier island illustration.
 
 Deep polish pass on the already-built island (#1 SHORTLIST). Collector unchanged in spirit (still read-only on agent-data); `load_usage` now passes through pace fields from `/workspace/tokenmax/usage.json` and **never invents %**.
 
@@ -239,3 +247,4 @@ python3 collect.py                                              # rebuild data/f
 - **Built:** Oct 8, 2026, by TokenMax (Boyd's Grok Bot) on the Grok Bot box.
 - **Run:** `./run.sh` (then open the localhost URL it prints).
 - Imported from `/workspace/tokenmax/bot-island` on Oct 23, 2026. node_modules, virtualenvs, logs and files over 20 MB were left out.
+- **Theme:** visual homage to Into the Breach's aesthetic (Subset Games). Original pixel grid, hangars, and mech units. No game assets. Fleet logic unchanged.
