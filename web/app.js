@@ -75,7 +75,7 @@ const BUILDINGS = {
 };
 const PLAZA = {x: 600, y: 420};
 const COLORS = {blue: '#3b82f6', red: '#ef4444', green: '#22c55e', yellow: '#eab308', gray: '#94a3b8', orange: '#f97316', cyan: '#06b6d4', violet: '#8b5cf6', magenta: '#d946ef', purple: '#8b5cf6', pink: '#ec4899', teal: '#14b8a6'};
-const EMOJI = {Michael: '🧭', Jim: '📚', Kelly: '📈', Oscar: '💰', Pam: '📅', 'Char Tutor': '✏️', 'Vic Tutor': '📐', Path: '🎓', 'Boyd Family Times': '📰', 'Boyd Family Times (archive)': '🗞️', Pods: '🎧', Brief: '☕', Dwight: '🧑‍💻', 'Dr. EggBot': '🥚', Ryan: '💡', TokenMax: '🚀'};
+const EMOJI = {Michael: '🧭', Jim: '📚', Kelly: '📈', Oscar: '💰', Pam: '📅', 'Alex Tutor': '✏️', 'Sam Tutor': '📐', Path: '🎓', 'Boyd Family Times': '📰', 'Boyd Family Times (archive)': '🗞️', Pods: '🎧', Brief: '☕', Dwight: '🧑‍💻', 'Dr. EggBot': '🥚', Ryan: '💡', TokenMax: '🚀'};
 function rng(seed) { let s = 0; for (const c of seed) s = (s * 31 + c.charCodeAt(0)) >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 function islandRadius(a) { return 1 + 0.06 * Math.sin(a * 3 + 0.7) + 0.045 * Math.sin(a * 5 + 2.1) + 0.03 * Math.sin(a * 9 + 1.3); }
 const ISLE = {cx: 600, cy: 395, rx: 545, ry: 330};
@@ -195,7 +195,7 @@ function nextScheduled(bot, from) {
 }
 
 // ---------- per-frame bot state ----------
-const APP_ICON = {Calendar: '📅', Gmail: '📧', 'Gmail (Miranda)': '📧', Slack: '💬', Notion: '📝', Drive: '📁', X: '𝕏', Composio: '🔌', Finance: '💵'};
+const APP_ICON = {Calendar: '📅', Gmail: '📧', 'Gmail (Jordan)': '📧', Slack: '💬', Notion: '📝', Drive: '📁', X: '𝕏', Composio: '🔌', Finance: '💵'};
 function eventLabel(e) {
   if (!e) return '';
   if (e.type === 'mcp_tool_call') return `${APP_ICON[e.app] || '🧰'} ${e.app} · ${prettyTool(e.tool)}`;

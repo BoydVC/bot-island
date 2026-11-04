@@ -38,7 +38,7 @@ SERVER_LABELS = {
     "user-Google-calendar": "Calendar",
     "user-Slack": "Slack",
     "user-Gmail": "Gmail",
-    "user-Gmail--miranda": "Gmail (Miranda)",
+    "user-Gmail--miranda": "Gmail (Jordan)",
     "user-Google-drive": "Drive",
     "user-Notion": "Notion",
     "user-X": "X",
