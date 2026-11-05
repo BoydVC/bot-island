@@ -75,7 +75,7 @@ Change the port in `config.json` or with `BOT_ISLAND_PORT=5000 python3 server.py
 | 📚 Research Library / 🔭 Trend Observatory | Jim / Kelly |
 | 🏦 Island Bank | Oscar |
 | 🏡 Family Clubhouse | Pam |
-| 🏫 Schoolhouse | Char Tutor, Vic Tutor, Path |
+| 🏫 Schoolhouse | Alex Tutor, Sam Tutor, Path |
 | 📰 Family Times Press (smokestack puffs while printing) | Boyd Family Times (+ archive) |
 | 📻 Pods Radio Tower (broadcasts radio waves when working) | Pods |
 | 📮 Morning Post Office | Brief |
