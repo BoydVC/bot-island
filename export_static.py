@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export a single self-contained HTML snapshot (UI + current fleet data) that opens anywhere, no server needed."""
+"""Export a single self-contained HTML snapshot (UI + committed fleet cache) that opens anywhere, no server needed."""
 import json
 import os
 import sys
@@ -12,7 +12,10 @@ import doctor  # noqa: E402
 
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "dist", "bot-island-snapshot.html")
-    data = collect.collect()
+    # Pack the committed demo cache. Do not re-read private agent stores.
+    fleet_path = os.path.join(HERE, "data", "fleet.json")
+    with open(fleet_path) as f:
+        data = collect.scrub_demo(json.load(f))
     web = os.path.join(HERE, "web")
     html = open(os.path.join(web, "index.html")).read()
     css = open(os.path.join(web, "style.css")).read()

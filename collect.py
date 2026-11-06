@@ -8,6 +8,7 @@ tool-event timestamps/types (with tool names and URL hostnames), and file modifi
 import glob
 import json
 import os
+import re
 import statistics
 import sys
 import time
@@ -34,17 +35,114 @@ def iso(ms):
     return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _rev(token):
+    """Spellings live reversed so this source file does not contain them."""
+    return token[::-1]
+
+
+def _like(src, repl):
+    if src.isupper():
+        return repl.upper()
+    if src[:1].isupper():
+        return repl[:1].upper() + repl[1:]
+    return repl.lower()
+
+
+def _sub_rx(text, rx, repl):
+    def _r(m):
+        return _like(m.group(0), repl)
+
+    return rx.sub(_r, text)
+
+
+def _sub_word(text, needle, repl):
+    rx = re.compile(rf"(?i)(?<![A-Za-z]){re.escape(needle)}(?![A-Za-z])")
+    return _sub_rx(text, rx, repl)
+
+
+def scrub_demo_text(text):
+    """Case-insensitive letter-bounded name scrub for demo-exported text.
+
+    Longer words, org slugs, and handles stay put because the match cannot
+    sit against another letter. Sports place names are masked first.
+    """
+    if not isinstance(text, str) or not text:
+        return text
+    masks = []
+
+    def mask(rx, value):
+        def _m(m):
+            masks.append(m.group(0))
+            return f"\ue000{len(masks) - 1}\ue001"
+        return rx.sub(_m, value)
+
+    city = _rev("ettolrahc")
+    given_v = _rev("rotciv")
+    st_mary = rf"st\.?\s*{_rev('yram')}(?:'s|’s|s)?"
+    text = mask(
+        re.compile(rf"(?i)(?<![A-Za-z]){city}(?![A-Za-z])(?:\s*,\s*|\s+)nc\b"),
+        text,
+    )
+    text = mask(
+        re.compile(
+            rf"(?i)(?<![A-Za-z]){st_mary}(?![A-Za-z])\s+"
+            rf"(?:stadium|mountaineers|industrial(?:\s+school)?)\b"
+        ),
+        text,
+    )
+    text = mask(re.compile(rf"(?i)\bmlb\s+{given_v}\b"), text)
+    for needle, repl in (
+        (_rev("ettolrahc"), "Riley"),
+        (_rev("rahc"), "Ri"),
+        (_rev("rotciv"), "Jordan"),
+        (_rev("civ"), "Jo"),
+        (_rev("adnarim"), "Sam"),
+        (_rev("gnidlaps"), "Northside Academy"),
+        (_rev("dyob"), "Alex"),
+    ):
+        text = _sub_word(text, needle, repl)
+    text = _sub_rx(
+        text,
+        re.compile(rf"(?i)(?<![A-Za-z]){st_mary}(?![A-Za-z])"),
+        "Northside Academy",
+    )
+
+    def unmask(m):
+        return masks[int(m.group(1))]
+
+    return re.sub(r"\ue000(\d+)\ue001", unmask, text)
+
+
+def scrub_demo(obj):
+    if isinstance(obj, str):
+        return scrub_demo_text(obj)
+    if isinstance(obj, list):
+        return [scrub_demo(x) for x in obj]
+    if isinstance(obj, dict):
+        return {(scrub_demo(k) if isinstance(k, str) else k): scrub_demo(v) for k, v in obj.items()}
+    return obj
+
+
 SERVER_LABELS = {
     "user-Google-calendar": "Calendar",
     "user-Slack": "Slack",
     "user-Gmail": "Gmail",
-    "user-Gmail--miranda": "Gmail (Jordan)",
+    "user-Gmail--sam": "Gmail (Sam)",
     "user-Google-drive": "Drive",
     "user-Notion": "Notion",
     "user-X": "X",
     "user-Composio": "Composio",
     "user-Finance-xai": "Finance",
 }
+
+
+def server_label(srv):
+    srv = scrub_demo_text(srv or "")
+    if srv in SERVER_LABELS:
+        return SERVER_LABELS[srv]
+    if srv.startswith("user-Gmail--"):
+        return SERVER_LABELS["user-Gmail--sam"]
+    return srv.replace("user-", "") or "tool"
 
 
 def event_summary(d):
@@ -56,7 +154,7 @@ def event_summary(d):
         srv = d.get("serverIdentifier") or ""
         tool = d.get("toolName") or ""
         short = tool[len(srv) + 1:] if srv and tool.startswith(srv + "-") else tool
-        out["app"] = SERVER_LABELS.get(srv, srv.replace("user-", "") or "tool")
+        out["app"] = server_label(srv)
         out["tool"] = short[:48]
         if d.get("status") and d.get("status") != "ok":
             out["status"] = d.get("status")
@@ -173,7 +271,7 @@ def chat_events(adir, aid):
         if isinstance(fa, dict) and fa.get("id"):
             out.append({"ts": ts, "type": "agent_msg", "app": "Message", "from": fa.get("id"), "bot": aid})
         else:
-            out.append({"ts": ts, "type": "boyd_msg", "app": "Alex", "bot": aid})
+            out.append({"ts": ts, "type": "alex_msg", "app": "Alex", "bot": aid})
     return out
 
 
@@ -284,7 +382,7 @@ def source_summary(root, ws, events):
             by_type[t] = e["ts"]
     return {
         "auditNewest": max([v for k, v in by_type.items() if k in ("mcp_tool_call", "shell_command", "browser_navigation", "computer_use_session")] or [None], key=lambda x: x or ""),
-        "chatNewest": max([v for k, v in by_type.items() if k in ("agent_msg", "boyd_msg")] or [None], key=lambda x: x or ""),
+        "chatNewest": max([v for k, v in by_type.items() if k in ("agent_msg", "alex_msg")] or [None], key=lambda x: x or ""),
         "filesNewest": by_type.get("file_write"),
         "routineTouchNewest": by_type.get("routine_touch"),
         "transcriptsNewest": newest(os.path.join(os.path.dirname(root), "agent-transcripts", "*", "*.jsonl")),
@@ -431,7 +529,7 @@ def collect():
     events.extend(dated_output_events(cfg, ws, bots, events))
     events.sort(key=lambda e: e.get("ts") or "")
     days = sorted({(e.get("ts") or "")[:10] for e in events if e.get("ts")})
-    return {
+    return scrub_demo({
         "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "timezone": cfg.get("timezone"),
         "tokenFuel": load_usage(cfg),
@@ -444,7 +542,7 @@ def collect():
         "eggs": eggs,
         "events": events,
         "eventDaysUTC": days,
-    }
+    })
 
 
 def main():
