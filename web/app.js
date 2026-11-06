@@ -782,7 +782,7 @@ function drawBubble(b, now, slot) {
 function drawSign(b, key) {
   ctx.font = '600 9px "IBM Plex Mono",ui-monospace,monospace'; ctx.textAlign = 'center';
   const busy = S.bots.some(o => o.building === key && o.state === 'work');
-  const mark = key === 'stadium' || key === 'commons' || key === 'boyd' ? '' : (busy ? ' ⚒' : '');
+  const mark = key === 'stadium' || key === 'commons' || key === 'alex' ? '' : (busy ? ' ⚒' : '');
   const t = `${b.emoji} ${b.name}${mark}`; const w = ctx.measureText(t).width + 10;
   px(b.x - w / 2, b.y + 6, w, 14, busy ? 'rgba(6,36,18,.92)' : 'rgba(5,8,18,.78)');
   if (busy) { ctx.strokeStyle = NEON.green; ctx.lineWidth = 1; ctx.strokeRect(Math.round(b.x - w / 2), b.y + 6, Math.round(w), 14); }
@@ -839,12 +839,12 @@ function draw(now) {
   const items = [];
   for (const t of trees) items.push({y: t.y, f: () => drawTree(t, now)});
   for (const [k, b] of Object.entries(BUILDINGS)) {
-    if (k === 'boyd') continue;
+    if (k === 'alex') continue;
     const busy = S.bots.some(o => o.building === k && o.state === 'work' && Math.hypot(o.x - o.tx, o.y - o.ty) < 6);
     items.push({y: b.y, f: () => drawBuilding(k, b, now, dk > 0.35, busy || (k === 'radio' && S.bots.some(o => o.building === 'radio' && o.state === 'work')))});
   }
   for (const b of S.bots) { items.push({y: b.home.y, f: () => drawHouse(b, now, dk)}); items.push({y: b.y + 8, f: () => drawBot(b, now)}); }
-  items.push({y: BOYD.home.y, f: () => drawBoydHouse(now, dk)}); items.push({y: BOYD.y + 8, f: () => drawBoyd(now)});
+  items.push({y: ALEX.home.y, f: () => drawBoydHouse(now, dk)}); items.push({y: ALEX.y + 8, f: () => drawBoyd(now)});
   items.sort((a, b) => a.y - b.y).forEach(i => i.f());
   drawClouds(now, dk);
   // night — neon city glow
@@ -873,7 +873,7 @@ function draw(now) {
   ctx.fillStyle = 'rgba(0,0,0,0.06)';
   for (let sy = -40; sy < H + 40; sy += 3) ctx.fillRect(-40, sy, W + 80, 1);
   // signs & bubbles on top
-  for (const [k, b] of Object.entries(BUILDINGS)) if (k !== 'boyd') drawSign(b, k);
+  for (const [k, b] of Object.entries(BUILDINGS)) if (k !== 'alex') drawSign(b, k);
   const placed = [];
   const bubbleBots = [...S.bots].sort((a, b) => (a.state === 'work' ? 0 : 1) - (b.state === 'work' ? 0 : 1));
   for (const b of bubbleBots) {
@@ -887,7 +887,7 @@ function draw(now) {
   }
   if (S.showNet) drawNetwork(etDayStart(S.t));
   drawOverlays(now, dk);
-  if (BOYD.state === 'out' || S.hover === 'boyd') drawBubble({x: BOYD.x, y: BOYD.y, what: BOYD.what, state: 'idle', id: 'boyd'}, now, 0);
+  if (ALEX.state === 'out' || S.hover === 'alex') drawBubble({x: ALEX.x, y: ALEX.y, what: ALEX.what, state: 'idle', id: 'alex'}, now, 0);
   // mode banner rendered in #modeBadge (HTML) so it stays readable over remaster sky
 }
 
@@ -974,7 +974,7 @@ function renderPlacesDir() {
   const dir = document.getElementById('placesDir'); if (!dir || dir.hidden) return;
   const rows = [];
   for (const [k, b] of Object.entries(BUILDINGS)) {
-    if (k === 'boyd') continue;
+    if (k === 'alex') continue;
     const who = S.bots.filter(o => o.building === k);
     const busy = who.some(o => o.state === 'work');
     const names = who.length
@@ -1139,7 +1139,7 @@ cv.addEventListener('mousemove', ev => {
   const p = worldPos(ev), b = hitBot(p), tt = document.getElementById('tooltip');
   S.hover = b ? b.id : null; cv.style.cursor = b ? 'pointer' : 'default';
   let html = '';
-  if (!b && Math.hypot(BOYD.x - p.x, BOYD.y - 4 - p.y) < 14) html = `<b>🧑 Alex</b><br><span style="color:#8fa3c9">The boss · Technology Director, KPD</span><br>${esc(BOYD.what)}`;
+  if (!b && Math.hypot(ALEX.x - p.x, ALEX.y - 4 - p.y) < 14) html = `<b>🧑 Alex</b><br><span style="color:#8fa3c9">The boss · Technology Director, KPD</span><br>${esc(ALEX.what)}`;
   else if (b) html = `<b>${b.emoji} ${esc(b.name)}</b><br><span style="color:#8fa3c9">${esc(b.title)}</span><br>${esc(b.what || '')}`;
   else { const hb = hitBuilding(p); if (hb) { const [k, bl] = hb; const who = S.bots.filter(o => o.building === k); html = `<b>${bl.emoji} ${esc(bl.name)}</b><br>${who.length ? who.map(o => `${o.emoji} ${esc(o.name)}: ${o.state === 'work' ? '⚡ ' + esc(o.what) : o.state}`).join('<br>') : k === 'stadium' ? 'Ravens · Orioles · Chelsea · Terps flags fly here' : k === 'commons' ? 'Where idle bots hang out' : ''}`; cv.style.cursor = 'help'; } }
   tt.hidden = !html; if (html) { tt.innerHTML = html; tt.style.left = Math.min(p.cx + 14, cv.clientWidth - 290) + 'px'; tt.style.top = (p.cy + 14) + 'px'; }
@@ -1180,7 +1180,7 @@ load().catch(e => { document.getElementById('clockDate').textContent = 'Could no
   if (qs.get('mode') === 'replay') { if (qs.get('day')) { const want = etDayStart(Date.parse(qs.get('day') + 'T12:00:00-04:00')); document.getElementById('daySel').value = String(want); } setMode('replay'); if (qs.get('hour')) S.t = S.replayDay + (+qs.get('hour')) * HOUR; if (qs.get('speed')) setSpeed(+qs.get('speed')); S.playing = qs.get('play') !== '0'; }
   if (qs.get('select')) { const b = S.bots.find(x => x.name.toLowerCase() === qs.get('select').toLowerCase()); if (b) select(b.id); }
   // place bots at their targets immediately on first load
-  updateBots(S.t, 0); for (const b of S.bots) { b.x = b.tx; b.y = b.ty; } updateBoyd(S.t, 0); BOYD.x = BOYD.tx; BOYD.y = BOYD.ty;
+  updateBots(S.t, 0); for (const b of S.bots) { b.x = b.tx; b.y = b.ty; } updateBoyd(S.t, 0); ALEX.x = ALEX.tx; ALEX.y = ALEX.ty;
   S.lastTickerT = S.t - 2 * HOUR; pumpTicker();
   requestAnimationFrame(frame);
   setInterval(() => load().catch(() => {}), 60e3);
@@ -1265,12 +1265,12 @@ function dayReport(ds) {
     const g = gs.length ? {label: gs.map(x => `${x.label} at ${hm(Date.parse(x.startET))}`).join(' and '), startET: null} : null;
     return `<div class="gazette"><b>📰 Island Gazette · ${dayLabel(ds + 12 * HOUR)}</b><div>🗓️ Forecast: ${sched.length} shifts scheduled${sched.length ? `, first ${esc(sched[0].b.name)} at ${hm(sched[0].s.start)}, last ${esc(sched[sched.length - 1].b.name)} at ${hm(sched[sched.length - 1].s.start)}` : ''}</div>${g ? `<div>🏟️ Game day: ${esc(g.label)}. Idle bots head to the stadium</div>` : ''}<div class="small">No tool logs for this day on the box (local logs end Sep 16). Shifts come from schedules and observed rhythms.</div></div>`;
   }
-  const by = {}, apps = {}, pairs = {}; let msgs = 0, boyd = 0, hosts = {};
+  const by = {}, apps = {}, pairs = {}; let msgs = 0, alex = 0, hosts = {};
   for (const e of ev) {
     by[e.bot] = (by[e.bot] || 0) + 1;
     if (e.type === 'dated_output' || e.type === 'routine_touch' || e.type === 'file_write') { if (e.type !== 'file_write') apps['Outputs'] = (apps['Outputs'] || 0) + 1; else apps['Files'] = (apps['Files'] || 0) + 1; }
     else if (e.type === 'agent_msg') { msgs++; const f = S.byId[e.from]?.name || '?', t = S.byId[e.bot]?.name || '?'; const k = [f, t].sort().join(' ↔ '); pairs[k] = (pairs[k] || 0) + 1; }
-    else if (e.type === 'boyd_msg') boyd++;
+    else if (e.type === 'boyd_msg') alex++;
     else apps[e.app] = (apps[e.app] || 0) + 1;
     if (e.host) hosts[e.host.replace(/^www\./, '')] = (hosts[e.host.replace(/^www\./, '')] || 0) + 1;
   }
@@ -1281,7 +1281,7 @@ function dayReport(ds) {
     `🏆 Busiest: <b>${b ? b.emoji + ' ' + esc(b.name) : '?'}</b> (${busiest[1]} events)`,
     top(apps, 3).length ? `🧰 Top tools: ${top(apps, 3).map(([k, v]) => `${esc(k)} ${v}`).join(' · ')}` : '',
     msgs ? `✉️ ${msgs} bot-to-bot messages${top(pairs)[0] ? `, mostly ${esc(top(pairs)[0][0])}` : ''}` : '',
-    boyd ? `📱 Alex checked in ${boyd} time${boyd > 1 ? 's' : ''}` : '',
+    alex ? `📱 Alex checked in ${alex} time${alex > 1 ? 's' : ''}` : '',
     top(hosts)[0] ? `🌐 Most visited: ${esc(top(hosts)[0][0])}` : '',
     `🌅 First stir ${hm(first.t)} (${esc(S.byId[first.bot]?.name || '')}) · 🌙 last ${hm(last.t)}`,
   ].filter(Boolean);
@@ -1352,23 +1352,23 @@ function stadiumSeat(b) {
 }
 
 // ---------- Alex himself ----------
-const BOYD = {x: 0, y: 0, tx: 0, ty: 0, what: '', home: {x: 712, y: 352}};
-BUILDINGS.boyd = {x: 712, y: 352, name: "Alex's Place", emoji: '🏠', decor: true};
+const ALEX = {x: 0, y: 0, tx: 0, ty: 0, what: '', home: {x: 712, y: 352}};
+BUILDINGS.alex = {x: 712, y: 352, name: "Alex's Place", emoji: '🏠', decor: true};
 function updateBoyd(t, dt) {
-  if (!BOYD.x) { BOYD.x = BOYD.home.x; BOYD.y = BOYD.home.y + 8; }
+  if (!ALEX.x) { ALEX.x = ALEX.home.x; ALEX.y = ALEX.home.y + 8; }
   const recent = [];
   for (const b of S.bots) for (const e of S.eventsByBot[b.id] || []) if (e.type === 'boyd_msg' && e.t <= t && t - e.t < 6 * MIN) recent.push(e);
   recent.sort((a, b) => b.t - a.t);
   const p = etParts(t), night = p.h >= 23 || p.h < 6;
-  if (recent.length) { const b = S.byId[recent[0].bot]; const bx = tucked(b) ? b.home.x : b.x, by = tucked(b) ? b.home.y : b.y; BOYD.tx = bx + 22; BOYD.ty = by + 4; BOYD.what = `📱 Chatting with ${b.name}`; BOYD.state = 'out'; }
-  else if (S.game) { const st = BUILDINGS.stadium; BOYD.tx = st.x; BOYD.ty = st.y - 14; BOYD.what = `📣 Go ${S.game.label.split(' ')[0]}!`; BOYD.state = 'out'; }
-  else if (night) { BOYD.tx = BOYD.home.x; BOYD.ty = BOYD.home.y + 4; BOYD.what = 'Asleep'; BOYD.state = 'sleep'; }
-  else { BOYD.tx = BOYD.home.x + 18; BOYD.ty = BOYD.home.y + 14; BOYD.what = p.wd >= 1 && p.wd <= 5 && p.h >= 8 && p.h < 17 ? 'At KPD running AI ops' : 'Home with the family'; BOYD.state = 'home'; }
-  const dx = BOYD.tx - BOYD.x, dy = BOYD.ty - BOYD.y, d = Math.hypot(dx, dy), sp = (90 + Math.min(S.speed, 1800) / 2.5) * dt;
-  if (d > .5) { const k = Math.min(1, sp / d); BOYD.x += dx * k; BOYD.y += dy * k; BOYD.moving = d > 2; } else BOYD.moving = false;
+  if (recent.length) { const b = S.byId[recent[0].bot]; const bx = tucked(b) ? b.home.x : b.x, by = tucked(b) ? b.home.y : b.y; ALEX.tx = bx + 22; ALEX.ty = by + 4; ALEX.what = `📱 Chatting with ${b.name}`; ALEX.state = 'out'; }
+  else if (S.game) { const st = BUILDINGS.stadium; ALEX.tx = st.x; ALEX.ty = st.y - 14; ALEX.what = `📣 Go ${S.game.label.split(' ')[0]}!`; ALEX.state = 'out'; }
+  else if (night) { ALEX.tx = ALEX.home.x; ALEX.ty = ALEX.home.y + 4; ALEX.what = 'Asleep'; ALEX.state = 'sleep'; }
+  else { ALEX.tx = ALEX.home.x + 18; ALEX.ty = ALEX.home.y + 14; ALEX.what = p.wd >= 1 && p.wd <= 5 && p.h >= 8 && p.h < 17 ? 'At KPD running AI ops' : 'Home with the family'; ALEX.state = 'home'; }
+  const dx = ALEX.tx - ALEX.x, dy = ALEX.ty - ALEX.y, d = Math.hypot(dx, dy), sp = (90 + Math.min(S.speed, 1800) / 2.5) * dt;
+  if (d > .5) { const k = Math.min(1, sp / d); ALEX.x += dx * k; ALEX.y += dy * k; ALEX.moving = d > 2; } else ALEX.moving = false;
 }
 function drawBoydHouse(now, dk) {
-  const {x, y} = BOYD.home;
+  const {x, y} = ALEX.home;
   shadow(x, y + 3, 26, 6);
   // larger capsule mansion
   px(x - 24, y - 26, 48, 26, '#1a1430');
@@ -1376,17 +1376,17 @@ function drawBoydHouse(now, dk) {
   px(x - 14, y - 38, 28, 8, shade(NEON.purp, 0.7));
   px(x - 6, y - 42, 12, 5, NEON.mag);
   px(x - 4, y - 14, 8, 14, '#050812'); // door
-  const lit = dk > .35 && BOYD.state !== 'sleep';
+  const lit = dk > .35 && ALEX.state !== 'sleep';
   for (const wx of [-18, -10, 6, 14]) px(x + wx - 2, y - 20, 5, 5, lit ? NEON.cyan : 'rgba(30,50,80,.55)');
   if (lit) pxGlow(x, y - 18, 30, NEON.cyan, 0.2);
   flag(x + 26, y - 2, NEON.purp, now, NEON.yellow);
-  neonSign(x, y + 14, "BOYD'S PLACE", NEON.purp, now);
+  neonSign(x, y + 14, "ALEX'S PLACE", NEON.purp, now);
 }
 function drawBoyd(now) {
-  if (BOYD.state === 'sleep' && Math.hypot(BOYD.x - BOYD.home.x, BOYD.y - BOYD.home.y - 4) < 4) return;
-  const bob = BOYD.moving ? Math.abs(Math.sin(now / 120)) * 2 : 0, x = Math.round(BOYD.x), y = Math.round(BOYD.y - bob);
+  if (ALEX.state === 'sleep' && Math.hypot(ALEX.x - ALEX.home.x, ALEX.y - ALEX.home.y - 4) < 4) return;
+  const bob = ALEX.moving ? Math.abs(Math.sin(now / 120)) * 2 : 0, x = Math.round(ALEX.x), y = Math.round(ALEX.y - bob);
   px(x - 5, y + 11, 10, 2, 'rgba(0,0,0,.4)');
-  const sw = BOYD.moving ? Math.round(Math.sin(now / 90) * 2) : 0;
+  const sw = ALEX.moving ? Math.round(Math.sin(now / 90) * 2) : 0;
   px(x - 3 + sw, y + 4, 2, 7, '#1e293b'); px(x + 1 - sw, y + 4, 2, 7, '#1e293b');
   px(x - 6, y - 8, 12, 13, NEON.purp);
   px(x - 3, y - 2, 6, 5, NEON.yellow); // jersey "8"
@@ -1568,14 +1568,14 @@ async function renderDoctor() {
 
 // ================= Ship-it Stats =================
 function shipItData() {
-  const days = {}, perBot = {}, sent = {}, boyd = {}, runs = {}, tools = {}, outputs = {};
+  const days = {}, perBot = {}, sent = {}, alex = {}, runs = {}, tools = {}, outputs = {};
   const dayKey = (t) => etDayKey(t);
   const outMin = new Set();
   for (const e of S.allEvents) {
     const k = dayKey(e.t); days[k] = (days[k] || 0) + 1;
     const pb = (perBot[e.bot] ||= {}); pb[k] = (pb[k] || 0) + 1;
     if (e.type === 'agent_msg') sent[e.from] = (sent[e.from] || 0) + 1;
-    else if (e.type === 'boyd_msg') boyd[e.bot] = (boyd[e.bot] || 0) + 1;
+    else if (e.type === 'boyd_msg') alex[e.bot] = (alex[e.bot] || 0) + 1;
     else if (e.type === 'mcp_tool_call' || e.type === 'shell_command' || e.type === 'browser_navigation' || e.type === 'computer_use_session') tools[e.bot] = (tools[e.bot] || 0) + 1;
     else if (e.type === 'file_write' || e.type === 'dated_output') { const kk = e.bot + k; if (!outMin.has(kk)) { outMin.add(kk); outputs[e.bot] = (outputs[e.bot] || 0) + 1; } }
   }
@@ -1590,7 +1590,7 @@ function shipItData() {
     for (let i = uniq.length - 1; i >= 0 && pb[uniq[i]]; i--) cur++;
     streaks[b.id] = {cur, best};
   }
-  return {days, perBot, sent, boyd, runs, tools, outputs, allDays: uniq, streaks};
+  return {days, perBot, sent, alex, runs, tools, outputs, allDays: uniq, streaks};
 }
 function renderShipIt() {
   const el = document.getElementById('statsView'), D = shipItData();
@@ -1644,7 +1644,7 @@ function renderShipIt() {
       ${board('🧰 Tool calls', D.tools)}
       ${board('✅ Routine runs completed', D.runs)}
       ${board('✉️ Handoffs sent to other bots', D.sent)}
-      ${board('📱 Chats with Alex', D.boyd)}
+      ${board('📱 Chats with Alex', D.alex)}
       ${board('🔥 Current streak (days)', streakCur, 'd')}
     </div>`;
   el.querySelectorAll('.who').forEach(w => w.onclick = () => gotoBot(w.dataset.bot));
