@@ -18,8 +18,8 @@
     "Alex Tutor": "school",
     "Sam Tutor": "school",
     "Path": "school",
-    "Boyd Family Times": "press",
-    "Boyd Family Times (archive)": "press",
+    "Lakeside Family Times": "press",
+    "Lakeside Family Times (archive)": "press",
     "Pods": "radio",
     "Brief": "postoffice",
     "Dwight": "workshop",
@@ -33,7 +33,7 @@
       "jim",
       "interest-journal-*"
     ],
-    "Boyd Family Times": [
+    "Lakeside Family Times": [
       "newspaper",
       "newspaper-*"
     ],
@@ -150,7 +150,7 @@
   "_artifacts_note": "Folders in /workspace whose file mtimes count as that bot's output. Only mtimes are read (never contents). deal-watch/, agent-tools/ and .playwright-mcp/ are not attributed because their owner can't be determined.",
   "datedOutputs": [
     {
-      "bot": "Boyd Family Times",
+      "bot": "Lakeside Family Times",
       "source": "editionLog",
       "label": "Family Times edition",
       "defaultTime": "05:15"
