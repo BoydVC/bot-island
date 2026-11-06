@@ -195,7 +195,7 @@ function nextScheduled(bot, from) {
 }
 
 // ---------- per-frame bot state ----------
-const APP_ICON = {Calendar: '📅', Gmail: '📧', 'Gmail (Jordan)': '📧', Slack: '💬', Notion: '📝', Drive: '📁', X: '𝕏', Composio: '🔌', Finance: '💵'};
+const APP_ICON = {Calendar: '📅', Gmail: '📧', 'Gmail (Sam)': '📧', Slack: '💬', Notion: '📝', Drive: '📁', X: '𝕏', Composio: '🔌', Finance: '💵'};
 function eventLabel(e) {
   if (!e) return '';
   if (e.type === 'mcp_tool_call') return `${APP_ICON[e.app] || '🧰'} ${e.app} · ${prettyTool(e.tool)}`;
@@ -205,7 +205,7 @@ function eventLabel(e) {
   if (e.type === 'dated_output') return `🗞️ ${e.tool} (time approx.)`;
   if (e.type === 'routine_touch') return `⏰ Ran “${e.tool}”`;
   if (e.type === 'agent_msg') { const f = S.byId[e.from]; return `✉️ Message from ${f ? f.name : 'another bot'}`; }
-  if (e.type === 'boyd_msg') return '📱 Chatting with Alex';
+  if (e.type === 'alex_msg') return '📱 Chatting with Alex';
   if (e.type === 'shell_command') return e.app === 'Shell' ? '💻 Running shell commands' : "🖥️ Working on Alex's PC";
   return e.app || e.type;
 }
@@ -821,7 +821,7 @@ function frame(now) {
     if (S.mode === 'live' && S.speed === 1 && S.playing) S.t = Date.now();
     if (S.mode === 'replay') { const d0 = S.replayDay, d1 = d0 + DAY; if (S.t >= d1) S.t = d0; if (S.t < d0) S.t = d0; }
     updateBots(S.t, dt);
-    updateBoyd(S.t, dt);
+    updateAlex(S.t, dt);
     draw(now);
     pumpTicker();
     if (now - lastUi > 400) { lastUi = now; renderUi(); }
@@ -844,7 +844,7 @@ function draw(now) {
     items.push({y: b.y, f: () => drawBuilding(k, b, now, dk > 0.35, busy || (k === 'radio' && S.bots.some(o => o.building === 'radio' && o.state === 'work')))});
   }
   for (const b of S.bots) { items.push({y: b.home.y, f: () => drawHouse(b, now, dk)}); items.push({y: b.y + 8, f: () => drawBot(b, now)}); }
-  items.push({y: ALEX.home.y, f: () => drawBoydHouse(now, dk)}); items.push({y: ALEX.y + 8, f: () => drawBoyd(now)});
+  items.push({y: ALEX.home.y, f: () => drawAlexHouse(now, dk)}); items.push({y: ALEX.y + 8, f: () => drawAlex(now)});
   items.sort((a, b) => a.y - b.y).forEach(i => i.f());
   drawClouds(now, dk);
   // night — neon city glow
@@ -905,7 +905,7 @@ function pumpTicker() {
   const nowR = performance.now();
   for (const e of add.slice(-25)) {
     if (e.type === 'agent_msg' && S.byId[e.from] && S.byId[e.bot]) blip(1200, 0.08, 'sine', 0.02), S.planes.push({from: S.byId[e.from], to: S.byId[e.bot], at: nowR + S.planes.length % 4 * 120});
-    if (e.type === 'boyd_msg' && S.byId[e.bot]) S.pings.push({b: S.byId[e.bot], at: nowR});
+    if (e.type === 'alex_msg' && S.byId[e.bot]) S.pings.push({b: S.byId[e.bot], at: nowR});
   }
   S.planes = S.planes.slice(-30); S.pings = S.pings.slice(-20);
   // compress bursts: one line per bot per minute
@@ -913,7 +913,7 @@ function pumpTicker() {
   for (const e of add.slice(-60)) {
     const k = e.bot + Math.floor(e.t / MIN); if (seen.has(k)) continue; seen.add(k);
     const b = S.byId[e.bot]; if (!b) continue;
-    const text = e.type === 'agent_msg' ? `got a message from ${S.byId[e.from]?.name || 'a bot'} ✉️` : e.type === 'boyd_msg' ? 'heard from Alex 📱' : e.sched ? `starts “${e.sched.label}”${e.sched.kind === 'scheduled' ? ' ⏰' : e.sched.kind === 'run' ? ' ✅' : ''}` : eventLabel(e);
+    const text = e.type === 'agent_msg' ? `got a message from ${S.byId[e.from]?.name || 'a bot'} ✉️` : e.type === 'alex_msg' ? 'heard from Alex 📱' : e.sched ? `starts “${e.sched.label}”${e.sched.kind === 'scheduled' ? ' ⏰' : e.sched.kind === 'run' ? ' ✅' : ''}` : eventLabel(e);
     S.ticker.unshift({t: e.t, b, text});
   }
   S.ticker = S.ticker.slice(0, 40);
@@ -1180,7 +1180,7 @@ load().catch(e => { document.getElementById('clockDate').textContent = 'Could no
   if (qs.get('mode') === 'replay') { if (qs.get('day')) { const want = etDayStart(Date.parse(qs.get('day') + 'T12:00:00-04:00')); document.getElementById('daySel').value = String(want); } setMode('replay'); if (qs.get('hour')) S.t = S.replayDay + (+qs.get('hour')) * HOUR; if (qs.get('speed')) setSpeed(+qs.get('speed')); S.playing = qs.get('play') !== '0'; }
   if (qs.get('select')) { const b = S.bots.find(x => x.name.toLowerCase() === qs.get('select').toLowerCase()); if (b) select(b.id); }
   // place bots at their targets immediately on first load
-  updateBots(S.t, 0); for (const b of S.bots) { b.x = b.tx; b.y = b.ty; } updateBoyd(S.t, 0); ALEX.x = ALEX.tx; ALEX.y = ALEX.ty;
+  updateBots(S.t, 0); for (const b of S.bots) { b.x = b.tx; b.y = b.ty; } updateAlex(S.t, 0); ALEX.x = ALEX.tx; ALEX.y = ALEX.ty;
   S.lastTickerT = S.t - 2 * HOUR; pumpTicker();
   requestAnimationFrame(frame);
   setInterval(() => load().catch(() => {}), 60e3);
@@ -1270,7 +1270,7 @@ function dayReport(ds) {
     by[e.bot] = (by[e.bot] || 0) + 1;
     if (e.type === 'dated_output' || e.type === 'routine_touch' || e.type === 'file_write') { if (e.type !== 'file_write') apps['Outputs'] = (apps['Outputs'] || 0) + 1; else apps['Files'] = (apps['Files'] || 0) + 1; }
     else if (e.type === 'agent_msg') { msgs++; const f = S.byId[e.from]?.name || '?', t = S.byId[e.bot]?.name || '?'; const k = [f, t].sort().join(' ↔ '); pairs[k] = (pairs[k] || 0) + 1; }
-    else if (e.type === 'boyd_msg') alex++;
+    else if (e.type === 'alex_msg') alex++;
     else apps[e.app] = (apps[e.app] || 0) + 1;
     if (e.host) hosts[e.host.replace(/^www\./, '')] = (hosts[e.host.replace(/^www\./, '')] || 0) + 1;
   }
@@ -1354,10 +1354,10 @@ function stadiumSeat(b) {
 // ---------- Alex himself ----------
 const ALEX = {x: 0, y: 0, tx: 0, ty: 0, what: '', home: {x: 712, y: 352}};
 BUILDINGS.alex = {x: 712, y: 352, name: "Alex's Place", emoji: '🏠', decor: true};
-function updateBoyd(t, dt) {
+function updateAlex(t, dt) {
   if (!ALEX.x) { ALEX.x = ALEX.home.x; ALEX.y = ALEX.home.y + 8; }
   const recent = [];
-  for (const b of S.bots) for (const e of S.eventsByBot[b.id] || []) if (e.type === 'boyd_msg' && e.t <= t && t - e.t < 6 * MIN) recent.push(e);
+  for (const b of S.bots) for (const e of S.eventsByBot[b.id] || []) if (e.type === 'alex_msg' && e.t <= t && t - e.t < 6 * MIN) recent.push(e);
   recent.sort((a, b) => b.t - a.t);
   const p = etParts(t), night = p.h >= 23 || p.h < 6;
   if (recent.length) { const b = S.byId[recent[0].bot]; const bx = tucked(b) ? b.home.x : b.x, by = tucked(b) ? b.home.y : b.y; ALEX.tx = bx + 22; ALEX.ty = by + 4; ALEX.what = `📱 Chatting with ${b.name}`; ALEX.state = 'out'; }
@@ -1367,7 +1367,7 @@ function updateBoyd(t, dt) {
   const dx = ALEX.tx - ALEX.x, dy = ALEX.ty - ALEX.y, d = Math.hypot(dx, dy), sp = (90 + Math.min(S.speed, 1800) / 2.5) * dt;
   if (d > .5) { const k = Math.min(1, sp / d); ALEX.x += dx * k; ALEX.y += dy * k; ALEX.moving = d > 2; } else ALEX.moving = false;
 }
-function drawBoydHouse(now, dk) {
+function drawAlexHouse(now, dk) {
   const {x, y} = ALEX.home;
   shadow(x, y + 3, 26, 6);
   // larger capsule mansion
@@ -1382,7 +1382,7 @@ function drawBoydHouse(now, dk) {
   flag(x + 26, y - 2, NEON.purp, now, NEON.yellow);
   neonSign(x, y + 14, "ALEX'S PLACE", NEON.purp, now);
 }
-function drawBoyd(now) {
+function drawAlex(now) {
   if (ALEX.state === 'sleep' && Math.hypot(ALEX.x - ALEX.home.x, ALEX.y - ALEX.home.y - 4) < 4) return;
   const bob = ALEX.moving ? Math.abs(Math.sin(now / 120)) * 2 : 0, x = Math.round(ALEX.x), y = Math.round(ALEX.y - bob);
   px(x - 5, y + 11, 10, 2, 'rgba(0,0,0,.4)');
@@ -1575,7 +1575,7 @@ function shipItData() {
     const k = dayKey(e.t); days[k] = (days[k] || 0) + 1;
     const pb = (perBot[e.bot] ||= {}); pb[k] = (pb[k] || 0) + 1;
     if (e.type === 'agent_msg') sent[e.from] = (sent[e.from] || 0) + 1;
-    else if (e.type === 'boyd_msg') alex[e.bot] = (alex[e.bot] || 0) + 1;
+    else if (e.type === 'alex_msg') alex[e.bot] = (alex[e.bot] || 0) + 1;
     else if (e.type === 'mcp_tool_call' || e.type === 'shell_command' || e.type === 'browser_navigation' || e.type === 'computer_use_session') tools[e.bot] = (tools[e.bot] || 0) + 1;
     else if (e.type === 'file_write' || e.type === 'dated_output') { const kk = e.bot + k; if (!outMin.has(kk)) { outMin.add(kk); outputs[e.bot] = (outputs[e.bot] || 0) + 1; } }
   }
@@ -1659,7 +1659,7 @@ window.botIslandStep = function (simMinutes, sub = 12) {
   for (let i = 0; i < sub; i++) {
     S.t += simMinutes * MIN / sub;
     if (S.mode === 'replay' && S.t >= S.replayDay + DAY) S.t = S.replayDay + DAY - MIN;
-    updateBots(S.t, dt); updateBoyd(S.t, dt); pumpTicker();
+    updateBots(S.t, dt); updateAlex(S.t, dt); pumpTicker();
   }
   draw(performance.now()); renderUi();
   return hm(S.t);
