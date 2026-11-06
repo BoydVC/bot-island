@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fleet Doctor: read-only health checks for Boyd's Grok Bot fleet (pstack-style: verify, reflect, blast radius).
+"""Fleet Doctor: read-only health checks for Alex's Grok Bot fleet (pstack-style: verify, reflect, blast radius).
 
 Usage:
   python3 doctor.py                      # writes reports/fleet-health-<date>.html and prints a summary
@@ -232,7 +232,7 @@ def analyze(data=None):
     if pdf:
         add("failing", "medium" if len(pdf) >= 3 else "low", f"Family Times couldn't print {len(pdf)} of the last {len(eds)} editions",
             f"PDF-only on {', '.join(e['date'][5:] for e in pdf)} (printer offline). The latest edition, {eds[-1]['date'][5:]}, was {eds[-1]['print']}.",
-            "Give the newspaper a printer-health preflight (wake the printer or fall back to a second printer) and have it tell Boyd when printing is skipped.", bot="Boyd Family Times")
+            "Give the newspaper a printer-health preflight (wake the printer or fall back to a second printer) and have it tell Alex when printing is skipped.", bot="Lakeside Family Times")
 
     # ---------- 3. token-heavy ----------
     heavy = sorted([r for r in routines if r["enabled"] is not False], key=lambda r: (r["minutesPerWeek"], r["toolCallsPerWeek"]), reverse=True)
@@ -376,7 +376,7 @@ h2{{font-size:15px;margin:22px 0 8px;color:#ffb547}} h2 .n{{background:#22325a;c
 table{{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}}th,td{{text-align:left;padding:5px 6px;border-bottom:1px solid #1c2a4b}}th{{color:#8fa3c9;font-weight:600}}
 .foot{{color:#8fa3c9;margin-top:24px;font-size:12px}}</style></head><body>
 <h1>🩺 Fleet Doctor: weekly health report</h1>
-<div class="sub">Boyd's Grok Bot fleet · generated {gen:%a %b %-d, %Y %-I:%M %p} ET · local logs through {fmt(datetime.fromisoformat(rep['logEnd']))} · read-only, nothing was changed</div>
+<div class="sub">Alex's Grok Bot fleet · generated {gen:%a %b %-d, %Y %-I:%M %p} ET · local logs through {fmt(datetime.fromisoformat(rep['logEnd']))} · read-only, nothing was changed</div>
 <div class="top"><div class="score">{rep['score']}</div><div><div>fleet health score (100 = nothing to fix){trend_html(rep)}</div>
 <div style="margin-top:6px"><span class="pill">🔴 {c['high']} high</span><span class="pill">🟡 {c['medium']} medium</span><span class="pill">🔵 {c['low']} low</span><span class="pill">ℹ️ {c['info']} info</span></div></div></div>
 {''.join(rows)}

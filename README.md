@@ -1,6 +1,6 @@
 # ⚔️ Bot Island
 
-**A living map of Boyd's Grok Bot fleet.** Every bot (Michael, Pam, Oscar, Jim, Kelly, Dwight, the tutors,
+**A living map of Alex's Grok Bot fleet.** Every bot (Michael, Pam, Oscar, Jim, Kelly, Dwight, the tutors,
 the Family Times, Pods, Path, Brief, Ryan, Dr. EggBot, TokenMax) gets a little house on the island and a workplace
 that matches its job. When a bot's routine runs, it walks to work and a speech bubble shows what it's doing
 ("Calendar · list events", "Browsing espn.com", "Message from Michael"). At night it goes home and sleeps 💤.
@@ -42,7 +42,7 @@ Deep polish pass on the already-built island (#1 SHORTLIST). Collector unchanged
 | ![](screenshots/network.png) | ![](screenshots/night.png) |
 | **Game day**: Ravens @ Falcons, idle bots pile into the stadium | **Bot card**: weekday × hour heatmap, routines in plain English |
 | ![](screenshots/gameday.png) | ![](screenshots/detail-jim.png) |
-| **Close-up** (scroll to zoom): Michael gets Oscar's message, Oscar searches Drive, Boyd strolls by | **Post-restore replay** (Tue Oct 6): Path's drills and the Pods feed, from output files |
+| **Close-up** (scroll to zoom): Michael gets Oscar's message, Oscar searches Drive, Alex strolls by | **Post-restore replay** (Tue Oct 6): Path's drills and the Pods feed, from output files |
 | ![](screenshots/closeup-hq.png) | ![](screenshots/replay-oct06-outputs.png) |
 | **Fleet Doctor weekly report** (`python3 doctor.py`) | |
 | ![](screenshots/doctor-weekly-report.png) | |
@@ -76,7 +76,7 @@ Change the port in `config.json` or with `BOT_ISLAND_PORT=5000 python3 server.py
 | 🏦 Island Bank | Oscar |
 | 🏡 Family Clubhouse | Pam |
 | 🏫 Schoolhouse | Alex Tutor, Sam Tutor, Path |
-| 📰 Family Times Press (smokestack puffs while printing) | Boyd Family Times (+ archive) |
+| 📰 Family Times Press (smokestack puffs while printing) | Lakeside Family Times (+ archive) |
 | 📻 Pods Radio Tower (broadcasts radio waves when working) | Pods |
 | 📮 Morning Post Office | Brief |
 | 🛠️ Dwight's Workshop (the gear spins faster when he's coding) | Dwight |
@@ -96,10 +96,10 @@ Change the port in `config.json` or with `BOT_ISLAND_PORT=5000 python3 server.py
 * **Island wire** (bottom right): a running ticker of what's happening.
 * **Click a bot** (on the map or in the roster) for its card: what it's doing now, next shift, routines in plain
   English, last tool activity and last output written to disk. Hover buildings to see who's inside.
-* **🧑 Boyd is on the island too** (Ravens #8 jersey). He lives at Boyd's Place, walks over to whichever bot he's
+* **🧑 Alex is on the island too** (Ravens #8 jersey). He lives at Alex's Place, walks over to whichever bot he's
   chatting with (replays use the real times he messaged them), and heads to the stadium on game days.
 * **📰 Island Gazette** (sidebar): an auto-written summary of the day (busiest bot, top tools, bot-to-bot message
-  count and the chattiest pair, how often Boyd checked in, most-visited site, first and last activity). On days with no logs it shows the schedule forecast instead.
+  count and the chattiest pair, how often Alex checked in, most-visited site, first and last activity). On days with no logs it shows the schedule forecast instead.
 * **✉️ Who talks to whom**: toggle in the map legend. Draws the message network between bot houses (all-time in Live, that day in Replay).
   Michael shows up as the hub, as designed.
 * **Three tabs** in the header: 🏝️ Island · 🩺 Fleet Doctor · 📊 Ship-it Stats (`?tab=doctor`, `?tab=stats`).
@@ -120,8 +120,8 @@ Change the port in `config.json` or with `BOT_ISLAND_PORT=5000 python3 server.py
   (`--json` for raw output, `--html PATH` to choose the file). Each CLI run also saves the score to `reports/history.jsonl`, so next week's report shows the trend (▲/▼ vs. the last run). The server also serves it at `/api/doctor/report`, and the JSON at `/api/doctor`.
 * **📊 Ship-it Stats** (tab): what the fleet shipped (completed routine runs + days with published output + bot-to-bot handoffs),
   a bots × days activity heatmap (last 49 days), 🔥 current and best streaks, whole-fleet daily bars, and six leaderboards
-  (most shipped, tool calls, routine runs, handoffs sent, chats with Boyd, current streak).
-* **🏟️ Game days** (`config.json → gameDays`): during a game, idle bots and Boyd fill the stadium, the scoreboard lights up
+  (most shipped, tool calls, routine runs, handoffs sent, chats with Alex, current streak).
+* **🏟️ Game days** (`config.json → gameDays`): during a game, idle bots and Alex fill the stadium, the scoreboard lights up
   and the lights come on. A **Game watch** panel in the sidebar lists the next fixtures in ET. Real schedules for Oct 7–21, 2026
   (checked Oct 7, sources in `config.json`):
   | When (ET) | Game | TV |
@@ -167,7 +167,7 @@ What the collector reads, all read-only:
 * `…/automations/*/automation.json` + `runs.json`: routine names, cron schedules, enabled flag, run start and finish times
 * `…/audit.jsonl`: tool-event timestamps and types. It keeps only the app/tool name and the URL **hostname**,
   never commands, page titles or arguments.
-* `…/store.db` (opened `mode=ro`): message timestamps and sender (Boyd vs. which bot). **Never message content.**
+* `…/store.db` (opened `mode=ro`): message timestamps and sender (Alex vs. which bot). **Never message content.**
 * mtimes of each bot's output folders in /workspace (e.g. `newspaper/`, `pods/`, `subs/`, `feed_*.xml`, `hspt/`, `ij_*.md`),
   never their contents. Mtimes from before the Oct 3 restore (`artifactsIgnoreBefore`) are ignored because the restore reset them.
 * `newspaper/edition-log.jsonl`: edition date, sheet count and print status (printed / PDF-only) only. **No headlines.**
@@ -181,7 +181,7 @@ After the Oct 3 restore, these on-box sources are all frozen at or before Sep 16
 `store.db` transcript rows (one tutor DB was touched Oct 6 with no new rows) and user memory. The bots now run server-side,
 so the freshest real signals on the box are their **outputs**: daily newspaper editions plus the edition log (through Oct 7),
 Path's `hspt/` drills (about 6:50 AM daily), Pods' `subs/` and RSS feeds (about 6:48 AM), Jim's interest-journal files (about 8:15 PM) and
-TokenMax's own files. Live and Replay use all of them through today. Boyd's Gmail (metadata-only view), Drive (recent files) and Slack (channel list), all checked read-only,
+TokenMax's own files. Live and Replay use all of them through today. Alex's Gmail (metadata-only view), Drive (recent files) and Slack (channel list), all checked read-only,
 held no bot-originated activity, so nothing from them is used.
 
 ### Fuel gauge / This Week pace: `/workspace/tokenmax/usage.json`
@@ -242,10 +242,10 @@ python3 collect.py                                              # rebuild data/f
 * `reports/`: Fleet Doctor weekly HTML reports
 * `timelapse.mjs`: CDP frame renderer used by `make_timelapse.sh`
 * `screenshots/`: rendered with headless Chrome via `./screenshot.sh <name> "<query>"`
-* `SHORTLIST.md` (one folder up): the other 9 project ideas from Boyd's bookmarks
+* `SHORTLIST.md` (one folder up): the other 9 project ideas from Alex's bookmarks
 
 ---
 ## Repo notes
-- **Built:** Oct 8, 2026, by TokenMax (Boyd's Grok Bot) on the Grok Bot box.
+- **Built:** Oct 8, 2026, by TokenMax (Alex's Grok Bot) on the Grok Bot box.
 - **Run:** `./run.sh` (then open the localhost URL it prints).
 - Imported from `/workspace/tokenmax/bot-island` on Oct 23, 2026. node_modules, virtualenvs, logs and files over 20 MB were left out.

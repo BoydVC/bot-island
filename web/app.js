@@ -1,5 +1,5 @@
 'use strict';
-/* Bot Island: a living map of Boyd's Grok Bot fleet. Inspired by @poteto's bot island.
+/* Bot Island: a living map of Alex's Grok Bot fleet. Inspired by @poteto's bot island.
    Cyberpunk pixel remaster — Oct 27 2026. Visuals only; fleet logic unchanged. */
 const TZ = 'America/New_York';
 const W = 1200, H = 760;             // logical world size
@@ -75,7 +75,7 @@ const BUILDINGS = {
 };
 const PLAZA = {x: 600, y: 420};
 const COLORS = {blue: '#3b82f6', red: '#ef4444', green: '#22c55e', yellow: '#eab308', gray: '#94a3b8', orange: '#f97316', cyan: '#06b6d4', violet: '#8b5cf6', magenta: '#d946ef', purple: '#8b5cf6', pink: '#ec4899', teal: '#14b8a6'};
-const EMOJI = {Michael: '🧭', Jim: '📚', Kelly: '📈', Oscar: '💰', Pam: '📅', 'Alex Tutor': '✏️', 'Sam Tutor': '📐', Path: '🎓', 'Boyd Family Times': '📰', 'Boyd Family Times (archive)': '🗞️', Pods: '🎧', Brief: '☕', Dwight: '🧑‍💻', 'Dr. EggBot': '🥚', Ryan: '💡', TokenMax: '🚀'};
+const EMOJI = {Michael: '🧭', Jim: '📚', Kelly: '📈', Oscar: '💰', Pam: '📅', 'Alex Tutor': '✏️', 'Sam Tutor': '📐', Path: '🎓', 'Lakeside Family Times': '📰', 'Lakeside Family Times (archive)': '🗞️', Pods: '🎧', Brief: '☕', Dwight: '🧑‍💻', 'Dr. EggBot': '🥚', Ryan: '💡', TokenMax: '🚀'};
 function rng(seed) { let s = 0; for (const c of seed) s = (s * 31 + c.charCodeAt(0)) >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 function islandRadius(a) { return 1 + 0.06 * Math.sin(a * 3 + 0.7) + 0.045 * Math.sin(a * 5 + 2.1) + 0.03 * Math.sin(a * 9 + 1.3); }
 const ISLE = {cx: 600, cy: 395, rx: 545, ry: 330};
@@ -205,8 +205,8 @@ function eventLabel(e) {
   if (e.type === 'dated_output') return `🗞️ ${e.tool} (time approx.)`;
   if (e.type === 'routine_touch') return `⏰ Ran “${e.tool}”`;
   if (e.type === 'agent_msg') { const f = S.byId[e.from]; return `✉️ Message from ${f ? f.name : 'another bot'}`; }
-  if (e.type === 'boyd_msg') return '📱 Chatting with Boyd';
-  if (e.type === 'shell_command') return e.app === 'Shell' ? '💻 Running shell commands' : "🖥️ Working on Boyd's PC";
+  if (e.type === 'boyd_msg') return '📱 Chatting with Alex';
+  if (e.type === 'shell_command') return e.app === 'Shell' ? '💻 Running shell commands' : "🖥️ Working on Alex's PC";
   return e.app || e.type;
 }
 function prettyTool(t) { return (t || '').replace(/^notion-|^slack_|^COMPOSIO_/, '').replace(/[_-]+/g, ' '); }
@@ -754,7 +754,7 @@ function drawBot(b, now) {
   ctx.restore();
   if (S.game && b.state === 'idle' && !sel) return;
   ctx.font = '600 9px "IBM Plex Mono",ui-monospace,monospace'; ctx.textAlign = 'center';
-  const nm = b.name.replace('Boyd Family Times', 'Family Times').replace(' (archive)', ' ‹arch›');
+  const nm = b.name.replace('Lakeside Family Times', 'Family Times').replace(' (archive)', ' ‹arch›');
   const tw = ctx.measureText(nm).width + 8;
   px(x - tw / 2, y + 12, tw, 12, 'rgba(5,8,18,.85)');
   ctx.strokeStyle = b.state === 'work' ? NEON.green : (b.state === 'sleep' ? NEON.purp : NEON.cyan);
@@ -913,7 +913,7 @@ function pumpTicker() {
   for (const e of add.slice(-60)) {
     const k = e.bot + Math.floor(e.t / MIN); if (seen.has(k)) continue; seen.add(k);
     const b = S.byId[e.bot]; if (!b) continue;
-    const text = e.type === 'agent_msg' ? `got a message from ${S.byId[e.from]?.name || 'a bot'} ✉️` : e.type === 'boyd_msg' ? 'heard from Boyd 📱' : e.sched ? `starts “${e.sched.label}”${e.sched.kind === 'scheduled' ? ' ⏰' : e.sched.kind === 'run' ? ' ✅' : ''}` : eventLabel(e);
+    const text = e.type === 'agent_msg' ? `got a message from ${S.byId[e.from]?.name || 'a bot'} ✉️` : e.type === 'boyd_msg' ? 'heard from Alex 📱' : e.sched ? `starts “${e.sched.label}”${e.sched.kind === 'scheduled' ? ' ⏰' : e.sched.kind === 'run' ? ' ✅' : ''}` : eventLabel(e);
     S.ticker.unshift({t: e.t, b, text});
   }
   S.ticker = S.ticker.slice(0, 40);
@@ -978,7 +978,7 @@ function renderPlacesDir() {
     const who = S.bots.filter(o => o.building === k);
     const busy = who.some(o => o.state === 'work');
     const names = who.length
-      ? who.map(o => o.name.replace('Boyd Family Times', 'Family Times').replace(' (archive)', '‹arch›')).join(', ')
+      ? who.map(o => o.name.replace('Lakeside Family Times', 'Family Times').replace(' (archive)', '‹arch›')).join(', ')
       : (k === 'stadium' ? 'idle bots on game day' : k === 'commons' ? 'hangout' : '—');
     rows.push(`<div class="pl${busy ? ' busy' : ''}" data-focus="${k}" title="Focus map on ${esc(b.name)}"><b>${b.emoji} ${esc(b.name)}</b><div class="who">${busy ? '⚡ ' : ''}${esc(names)}</div></div>`);
   }
@@ -1104,7 +1104,7 @@ function renderTimeline() {
   rows.forEach((b, i) => {
     const y = TL.top + i * TL.row;
     tctx.textAlign = 'right'; tctx.fillStyle = S.selected === b.id ? '#ffb547' : '#cfe0ff'; tctx.font = '10.5px ui-sans-serif,system-ui,sans-serif';
-    tctx.fillText(`${b.emoji} ${b.name.replace('Boyd Family Times', 'Family Times').replace(' (archive)', ' (arch)')}`, x0 - 8, y + TL.row - 3);
+    tctx.fillText(`${b.emoji} ${b.name.replace('Lakeside Family Times', 'Family Times').replace(' (archive)', ' (arch)')}`, x0 - 8, y + TL.row - 3);
     tctx.fillStyle = 'rgba(255,255,255,.03)'; tctx.fillRect(x0, y + 1, x1 - x0, TL.row - 2);
     for (const s of sessionsFor(b, ds)) {
       const a = X(Math.max(ds, s.start)), z = Math.max(a + 4, X(Math.min(ds + DAY, s.end)));
@@ -1139,7 +1139,7 @@ cv.addEventListener('mousemove', ev => {
   const p = worldPos(ev), b = hitBot(p), tt = document.getElementById('tooltip');
   S.hover = b ? b.id : null; cv.style.cursor = b ? 'pointer' : 'default';
   let html = '';
-  if (!b && Math.hypot(BOYD.x - p.x, BOYD.y - 4 - p.y) < 14) html = `<b>🧑 Boyd</b><br><span style="color:#8fa3c9">The boss · Technology Director, KPD</span><br>${esc(BOYD.what)}`;
+  if (!b && Math.hypot(BOYD.x - p.x, BOYD.y - 4 - p.y) < 14) html = `<b>🧑 Alex</b><br><span style="color:#8fa3c9">The boss · Technology Director, KPD</span><br>${esc(BOYD.what)}`;
   else if (b) html = `<b>${b.emoji} ${esc(b.name)}</b><br><span style="color:#8fa3c9">${esc(b.title)}</span><br>${esc(b.what || '')}`;
   else { const hb = hitBuilding(p); if (hb) { const [k, bl] = hb; const who = S.bots.filter(o => o.building === k); html = `<b>${bl.emoji} ${esc(bl.name)}</b><br>${who.length ? who.map(o => `${o.emoji} ${esc(o.name)}: ${o.state === 'work' ? '⚡ ' + esc(o.what) : o.state}`).join('<br>') : k === 'stadium' ? 'Ravens · Orioles · Chelsea · Terps flags fly here' : k === 'commons' ? 'Where idle bots hang out' : ''}`; cv.style.cursor = 'help'; } }
   tt.hidden = !html; if (html) { tt.innerHTML = html; tt.style.left = Math.min(p.cx + 14, cv.clientWidth - 290) + 'px'; tt.style.top = (p.cy + 14) + 'px'; }
@@ -1187,7 +1187,7 @@ load().catch(e => { document.getElementById('clockDate').textContent = 'Could no
 });
 if (qs.get('debug') === '1') setInterval(() => { const m = S.bots.find(b => b.name === 'Michael'); const ev = S.eventsByBot[m.id] || []; document.title = `t=${new Date(S.t).toISOString()} mEvents=${ev.length} types=${[...new Set(ev.map(e=>e.type))]} sess=${JSON.stringify(sessionsFor(m, etDayStart(S.t)).map(s=>[new Date(s.start).toISOString(),s.kind]))} state=${m.state}`; }, 500);
 
-// ---------- overlays: zzz, messages between bots, Boyd pings ----------
+// ---------- overlays: zzz, messages between bots, Alex pings ----------
 function tucked(b) { return b.state === 'sleep' && Math.hypot(b.x - b.home.x, b.y - b.home.y - 4) < 4; }
 function drawOverlays(now, dk) {
   for (const b of S.bots) if (tucked(b)) {
@@ -1204,7 +1204,7 @@ function drawOverlays(now, dk) {
     ctx.globalAlpha = 1;
     if (S.hover === b.id || S.selected === b.id || dk > 0.5) {
       ctx.font = '600 9px "IBM Plex Mono",monospace';
-      const nm = b.name.replace('Boyd Family Times', 'Family Times').replace(' (archive)', ' ‹arch›');
+      const nm = b.name.replace('Lakeside Family Times', 'Family Times').replace(' (archive)', ' ‹arch›');
       const tw = ctx.measureText(nm).width + 8;
       px(x - tw / 2, y + 3, tw, 11, 'rgba(26,10,46,.9)');
       ctx.strokeStyle = NEON.purp; ctx.lineWidth = 1; ctx.strokeRect(Math.round(x - tw / 2), y + 3, Math.round(tw), 11);
@@ -1281,7 +1281,7 @@ function dayReport(ds) {
     `🏆 Busiest: <b>${b ? b.emoji + ' ' + esc(b.name) : '?'}</b> (${busiest[1]} events)`,
     top(apps, 3).length ? `🧰 Top tools: ${top(apps, 3).map(([k, v]) => `${esc(k)} ${v}`).join(' · ')}` : '',
     msgs ? `✉️ ${msgs} bot-to-bot messages${top(pairs)[0] ? `, mostly ${esc(top(pairs)[0][0])}` : ''}` : '',
-    boyd ? `📱 Boyd checked in ${boyd} time${boyd > 1 ? 's' : ''}` : '',
+    boyd ? `📱 Alex checked in ${boyd} time${boyd > 1 ? 's' : ''}` : '',
     top(hosts)[0] ? `🌐 Most visited: ${esc(top(hosts)[0][0])}` : '',
     `🌅 First stir ${hm(first.t)} (${esc(S.byId[first.bot]?.name || '')}) · 🌙 last ${hm(last.t)}`,
   ].filter(Boolean);
@@ -1314,7 +1314,7 @@ function drawNetwork(ds) {
   }
   for (const b of S.bots) {
     ctx.font = '700 10px ui-sans-serif,system-ui,sans-serif'; ctx.textAlign = 'center';
-    const nm = `${b.emoji} ${b.name.replace('Boyd Family Times', 'Family Times').replace(' (archive)', ' ‹arch›')}`, tw = ctx.measureText(nm).width + 10;
+    const nm = `${b.emoji} ${b.name.replace('Lakeside Family Times', 'Family Times').replace(' (archive)', ' ‹arch›')}`, tw = ctx.measureText(nm).width + 10;
     px(b.home.x - tw / 2, b.home.y - 50, tw, 14, 'rgba(5,8,18,.92)'); ctx.strokeStyle = NEON.mag; ctx.lineWidth = 1; ctx.strokeRect(Math.round(b.home.x - tw / 2), b.home.y - 50, Math.round(tw), 14); ctx.fillStyle = NEON.cyan; ctx.fillText(nm, b.home.x, b.home.y - 40);
   }
   ctx.restore();
@@ -1351,9 +1351,9 @@ function stadiumSeat(b) {
   return {x: st.x + Math.cos(a) * rx, y: st.y + 4 + Math.sin(a) * ry};
 }
 
-// ---------- Boyd himself ----------
+// ---------- Alex himself ----------
 const BOYD = {x: 0, y: 0, tx: 0, ty: 0, what: '', home: {x: 712, y: 352}};
-BUILDINGS.boyd = {x: 712, y: 352, name: "Boyd's Place", emoji: '🏠', decor: true};
+BUILDINGS.boyd = {x: 712, y: 352, name: "Alex's Place", emoji: '🏠', decor: true};
 function updateBoyd(t, dt) {
   if (!BOYD.x) { BOYD.x = BOYD.home.x; BOYD.y = BOYD.home.y + 8; }
   const recent = [];
@@ -1394,10 +1394,10 @@ function drawBoyd(now) {
   px(x - 4, y - 16, 8, 8, '#f1c27d'); // head
   px(x - 5, y - 18, 10, 4, '#5b3a1e'); // hair
   ctx.font = '600 9px "IBM Plex Mono",monospace';
-  const tw = ctx.measureText('Boyd').width + 8;
+  const tw = ctx.measureText('Alex').width + 8;
   px(x - tw / 2, y + 13, tw, 12, 'rgba(26,10,46,.92)');
   ctx.strokeStyle = NEON.mag; ctx.lineWidth = 1; ctx.strokeRect(Math.round(x - tw / 2), y + 13, Math.round(tw), 12);
-  ctx.fillStyle = '#fff'; ctx.fillText('Boyd', x, y + 22);
+  ctx.fillStyle = '#fff'; ctx.fillText('Alex', x, y + 22);
 }
 
 // ---------- cinema mode: loop the busiest real days at 30 min/s (great on a TV) ----------
@@ -1612,7 +1612,7 @@ function renderShipIt() {
   let m = `<div class="matrix" style="grid-template-columns:170px repeat(${days.length},1fr) 70px">`;
   m += '<span></span>' + days.map((k, i) => `<span class="dl">${i % 7 === 0 ? k.slice(5).replace('-', '/') : ''}</span>`).join('') + '<span class="dl">streak</span>';
   for (const b of rows) {
-    m += `<span class="lbl who" data-bot="${esc(b.name)}" style="text-decoration:none">${b.emoji} ${esc(b.name.replace('Boyd Family Times', 'Family Times'))}</span>`;
+    m += `<span class="lbl who" data-bot="${esc(b.name)}" style="text-decoration:none">${b.emoji} ${esc(b.name.replace('Lakeside Family Times', 'Family Times'))}</span>`;
     m += days.map(k => { const v = (D.perBot[b.id] || {})[k] || 0; return `<i title="${esc(b.name)} · ${k}: ${v}" style="background:${v ? b.hex : '#17233f'};opacity:${v ? 0.3 + 0.7 * Math.sqrt(v / max) : 1}"></i>`; }).join('');
     const st = D.streaks[b.id]; m += `<span class="dl streak">${st.cur ? '🔥 ' + st.cur + 'd' : '–'}${st.best > st.cur ? ` · best ${st.best}` : ''}</span>`;
   }
@@ -1625,7 +1625,7 @@ function renderShipIt() {
   pending.sort((a, b) => a.s.start - b.s.start);
   const shippedToday = `<div class="vcard" style="margin-bottom:14px"><h2>📦 Shipped today · ${dayLabel(Date.now())}</h2>
     <table class="t"><tr><th>Bot</th><th>What</th><th>First</th><th>Last</th><th class="num">Events</th></tr>
-    ${Object.entries(tb).sort((a, b) => a[1].first - b[1].first).map(([id, x]) => `<tr><td>${name(id)}</td><td>${esc([...x.kinds].join(', '))}${id === 'newspaper' || (S.byId[id]?.name === 'Boyd Family Times' && ed) ? ` · edition ${ed ? esc(ed.print === 'printed' ? 'printed 🖨️' : ed.print) : ''}` : ''}</td><td>${hm(x.first)}</td><td>${hm(x.last)}</td><td class="num">${x.n}</td></tr>`).join('') || '<tr><td colspan="5" class="small">Nothing yet today.</td></tr>'}
+    ${Object.entries(tb).sort((a, b) => a[1].first - b[1].first).map(([id, x]) => `<tr><td>${name(id)}</td><td>${esc([...x.kinds].join(', '))}${id === 'newspaper' || (S.byId[id]?.name === 'Lakeside Family Times' && ed) ? ` · edition ${ed ? esc(ed.print === 'printed' ? 'printed 🖨️' : ed.print) : ''}` : ''}</td><td>${hm(x.first)}</td><td>${hm(x.last)}</td><td class="num">${x.n}</td></tr>`).join('') || '<tr><td colspan="5" class="small">Nothing yet today.</td></tr>'}
     </table>${pending.length ? `<p class="small" style="margin:8px 0 0">Still to come: ${pending.slice(0, 6).map(({b, s}) => `${hm(s.start)} ${b.emoji} ${esc(b.name)}`).join(' · ')}</p>` : ''}</div>`;
   el.innerHTML = `
     <p class="hero">The fleet shipped <em>${totalShip.toLocaleString()}</em> things: ${totRuns} routine runs, ${Object.values(D.outputs).reduce((a, b) => a + b, 0)} days of published output and ${totMsg} bot-to-bot handoffs, backed by <em>${totTools.toLocaleString()}</em> tool calls.</p>
@@ -1644,7 +1644,7 @@ function renderShipIt() {
       ${board('🧰 Tool calls', D.tools)}
       ${board('✅ Routine runs completed', D.runs)}
       ${board('✉️ Handoffs sent to other bots', D.sent)}
-      ${board('📱 Chats with Boyd', D.boyd)}
+      ${board('📱 Chats with Alex', D.boyd)}
       ${board('🔥 Current streak (days)', streakCur, 'd')}
     </div>`;
   el.querySelectorAll('.who').forEach(w => w.onclick = () => gotoBot(w.dataset.bot));

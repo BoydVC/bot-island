@@ -61,7 +61,7 @@ def event_summary(d):
         if d.get("status") and d.get("status") != "ok":
             out["status"] = d.get("status")
     elif t == "shell_command":
-        out["app"] = "Shell" if d.get("target") != "user_machine" else "Boyd's PC"
+        out["app"] = "Shell" if d.get("target") != "user_machine" else "Alex's PC"
     elif t == "browser_navigation":
         host = ""
         try:
@@ -173,7 +173,7 @@ def chat_events(adir, aid):
         if isinstance(fa, dict) and fa.get("id"):
             out.append({"ts": ts, "type": "agent_msg", "app": "Message", "from": fa.get("id"), "bot": aid})
         else:
-            out.append({"ts": ts, "type": "boyd_msg", "app": "Boyd", "bot": aid})
+            out.append({"ts": ts, "type": "boyd_msg", "app": "Alex", "bot": aid})
     return out
 
 
